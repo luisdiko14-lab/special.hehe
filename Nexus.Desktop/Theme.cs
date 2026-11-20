@@ -11,6 +11,8 @@ internal static class Theme
     public static readonly Color SurfaceRaised = Color.FromArgb(31, 40, 58);
     public static readonly Color Accent = Color.FromArgb(101, 130, 255);
     public static readonly Color AccentHover = Color.FromArgb(119, 145, 255);
+    public static readonly Color AccentSoft = Color.FromArgb(35, 48, 83);
+    public static readonly Color SurfaceHover = Color.FromArgb(37, 47, 68);
     public static readonly Color Text = Color.FromArgb(239, 243, 252);
     public static readonly Color Muted = Color.FromArgb(151, 164, 188);
     public static readonly Color Border = Color.FromArgb(43, 54, 75);
@@ -57,8 +59,10 @@ internal static class Theme
             Margin = new Padding(0, 0, 9, 8),
             TextAlign = ContentAlignment.MiddleCenter
         };
-        button.FlatAppearance.BorderSize = 0;
-        button.FlatAppearance.MouseOverBackColor = primary ? AccentHover : Color.FromArgb(42, 53, 75);
+        button.FlatAppearance.BorderSize = primary ? 0 : 1;
+        button.FlatAppearance.BorderColor = Border;
+        button.FlatAppearance.MouseOverBackColor = primary ? AccentHover : SurfaceHover;
+        button.FlatAppearance.MouseDownBackColor = primary ? Color.FromArgb(83, 109, 226) : AccentSoft;
         button.Click += handler;
         return button;
     }
