@@ -161,12 +161,18 @@ internal sealed class SentinelPage : UserControl
         {
             var progress = new Progress<SentinelScanProgress>(update =>
             {
+                if (IsDisposed || !IsHandleCreated)
+                    return;
+
                 _status.Text = "Hashed " + update.FilesProcessed.ToString("N0") +
                                " files   •   Skipped " + update.FilesSkipped.ToString("N0") +
                                "   •   " + update.CurrentFile;
             });
 
             var summary = await _scanner.ScanAsync(root, progress, cancellation.Token);
+            if (IsDisposed)
+                return;
+
             _lastSummary = summary;
             PopulateResults(summary);
 
@@ -182,25 +188,34 @@ internal sealed class SentinelPage : UserControl
         }
         catch (OperationCanceledException)
         {
-            _progress.Style = ProgressBarStyle.Continuous;
-            _progress.Value = 0;
-            _status.Text = "Audit cancelled. Partial results were discarded.";
-            _results.Items.Clear();
+            if (!IsDisposed)
+            {
+                _progress.Style = ProgressBarStyle.Continuous;
+                _progress.Value = 0;
+                _status.Text = "Audit cancelled. Partial results were discarded.";
+                _results.Items.Clear();
+            }
         }
         catch (Exception ex)
         {
-            _progress.Style = ProgressBarStyle.Continuous;
-            _progress.Value = 0;
-            _status.Text = "Audit failed.";
-            MessageBox.Show(this, ex.Message, "Sentinel audit failed",
-                MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (!IsDisposed)
+            {
+                _progress.Style = ProgressBarStyle.Continuous;
+                _progress.Value = 0;
+                _status.Text = "Audit failed.";
+                MessageBox.Show(this, ex.Message, "Sentinel audit failed",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         finally
         {
             _scanCancellation = null;
             cancellation.Dispose();
-            _scanButton.Enabled = true;
-            _cancelButton.Enabled = false;
+            if (!IsDisposed)
+            {
+                _scanButton.Enabled = true;
+                _cancelButton.Enabled = false;
+            }
         }
     }
 
@@ -300,8 +315,8 @@ internal sealed class SentinelPage : UserControl
     {
         if (disposing)
         {
+            // The active scan owns disposal of its token source in StartScanAsync's finally block.
             _scanCancellation?.Cancel();
-            _scanCancellation?.Dispose();
         }
 
         base.Dispose(disposing);

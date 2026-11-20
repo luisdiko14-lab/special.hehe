@@ -38,13 +38,13 @@ internal sealed class SentinelScanner
                         if ((attributes & FileAttributes.ReparsePoint) == 0)
                             pendingDirectories.Push(childDirectory);
                     }
-                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or Security.SecurityException)
+                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException)
                     {
                         skipped++;
                     }
                 }
             }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or Security.SecurityException)
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException)
             {
                 skipped++;
             }
@@ -91,7 +91,7 @@ internal sealed class SentinelScanner
                     {
                         throw;
                     }
-                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or Security.SecurityException or ArgumentException)
+                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException or ArgumentException)
                     {
                         skipped++;
                     }
@@ -102,7 +102,7 @@ internal sealed class SentinelScanner
                         await Task.Yield();
                 }
             }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or Security.SecurityException)
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.Security.SecurityException)
             {
                 skipped++;
             }
