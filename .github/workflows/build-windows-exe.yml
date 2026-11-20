@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Install .NET 10 LTS SDK
         uses: actions/setup-dotnet@v6
@@ -54,6 +56,32 @@ jobs:
             throw "Publish did not produce Nexus.exe."
           }
           Compress-Archive -Path "artifacts/Nexus-win-x64/Nexus.exe" -DestinationPath "artifacts/Nexus-Windows-x64.zip" -Force
+
+      - name: Commit EXE to repository
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          New-Item -ItemType Directory -Force -Path "dist" | Out-Null
+          Copy-Item "artifacts/Nexus-win-x64/Nexus.exe" "dist/Nexus.exe" -Force
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "dist/Nexus.exe"
+
+          git diff --cached --quiet
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "dist/Nexus.exe is already up to date."
+          } else {
+            git commit -m "build: update Nexus Windows executable [skip ci]"
+            if ($LASTEXITCODE -ne 0) {
+              throw "Could not commit the generated executable."
+            }
+            git push origin HEAD:main
+            if ($LASTEXITCODE -ne 0) {
+              throw "Could not push the generated executable to main."
+            }
+          }
 
       - name: Upload Windows build
         uses: actions/upload-artifact@v7
