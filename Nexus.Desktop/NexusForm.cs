@@ -9,6 +9,7 @@ internal sealed class NexusForm : Form
     private readonly OverviewPage _overview = new();
     private readonly GameHubPage _gameHub = new();
     private readonly SentinelPage _sentinel = new();
+    private readonly ToolsPage _tools = new();
     private readonly Panel _pageHost = new();
     private readonly Label _pageTitle = new();
     private readonly Label _pageSubtitle = new();
@@ -77,7 +78,7 @@ internal sealed class NexusForm : Form
         {
             Location = new Point(10, 146),
             Width = 190,
-            Height = 250,
+            Height = 310,
             FlowDirection = FlowDirection.TopDown,
             WrapContents = false,
             BackColor = Theme.Sidebar
@@ -90,6 +91,8 @@ internal sealed class NexusForm : Form
             Navigate(_gameHub, "GameHub", "Your games, shortcuts and playtime in one library", _navigation[1])));
         _navigation.Add(CreateNavButton("⬡   Sentinel", () =>
             Navigate(_sentinel, "Sentinel", "File integrity checks and folder audits", _navigation[2])));
+        _navigation.Add(CreateNavButton("⚙   Toolbox", () =>
+            Navigate(_tools, "Windows toolbox", "Process manager and everyday system utilities", _navigation[3])));
 
         foreach (var button in _navigation)
             nav.Controls.Add(button);
@@ -193,6 +196,7 @@ internal sealed class NexusForm : Form
         _overview.Dispose();
         _gameHub.Dispose();
         _sentinel.Dispose();
+        _tools.Dispose();
         base.OnFormClosed(e);
     }
 }
