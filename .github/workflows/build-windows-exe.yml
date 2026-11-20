@@ -1,0 +1,41 @@
+name: Build Nexus Windows EXE
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Nexus.Desktop/**"
+      - ".github/workflows/build-windows-exe.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "Nexus.Desktop/**"
+      - ".github/workflows/build-windows-exe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore
+        run: dotnet restore Nexus.Desktop/Nexus.Desktop.csproj
+      - name: Build
+        run: dotnet build Nexus.Desktop/Nexus.Desktop.csproj --configuration Release --no-restore
+      - name: Publish single-file Windows x64 EXE
+        run: dotnet publish Nexus.Desktop/Nexus.Desktop.csproj --configuration Release --runtime win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:DebugType=None -p:DebugSymbols=false --output artifacts/Nexus-win-x64
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nexus-Windows-x64
+          path: artifacts/Nexus-win-x64/
+          if-no-files-found: error
+          retention-days: 30
