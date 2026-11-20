@@ -25,7 +25,7 @@ internal sealed class ToolsPage : UserControl
             BackColor = Theme.Background,
             Padding = new Padding(8)
         };
-        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 112));
+        root.RowStyles.Add(new RowStyle(SizeType.Absolute, 152));
         root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         root.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
         Controls.Add(root);
@@ -41,7 +41,7 @@ internal sealed class ToolsPage : UserControl
         var actions = new FlowLayoutPanel
         {
             Location = new Point(0, 62),
-            Size = new Size(900, 43),
+            Size = new Size(1120, 43),
             FlowDirection = FlowDirection.LeftToRight,
             WrapContents = false,
             BackColor = Theme.Background
@@ -49,7 +49,32 @@ internal sealed class ToolsPage : UserControl
         actions.Controls.Add(Theme.Button("Refresh processes", true, (_, _) => RefreshProcesses()));
         actions.Controls.Add(Theme.Button("End selected task", false, (_, _) => EndSelectedProcess()));
         actions.Controls.Add(Theme.Button("Open file location", false, (_, _) => OpenSelectedLocation()));
+
+        _search.Width = 245;
+        _search.Height = 38;
+        _search.Margin = new Padding(4, 1, 0, 0);
+        _search.BackColor = Theme.Surface;
+        _search.ForeColor = Theme.Text;
+        _search.BorderStyle = BorderStyle.FixedSingle;
+        _search.Font = new Font("Segoe UI", 9);
+        _search.PlaceholderText = "Filter by process, PID or window…";
+        _search.TextChanged += (_, _) => RefreshProcesses();
+        actions.Controls.Add(_search);
         top.Controls.Add(actions);
+
+        var quickTools = new FlowLayoutPanel
+        {
+            Location = new Point(0, 106),
+            Size = new Size(1120, 42),
+            FlowDirection = FlowDirection.LeftToRight,
+            WrapContents = false,
+            BackColor = Theme.Background
+        };
+        quickTools.Controls.Add(Theme.Button("Services", false, (_, _) => OpenWindowsTool("services.msc")));
+        quickTools.Controls.Add(Theme.Button("Device Manager", false, (_, _) => OpenWindowsTool("devmgmt.msc")));
+        quickTools.Controls.Add(Theme.Button("Startup folder", false, (_, _) => OpenWindowsTool("explorer.exe", "shell:startup")));
+        quickTools.Controls.Add(Theme.Button("Disk Cleanup", false, (_, _) => OpenWindowsTool("cleanmgr.exe")));
+        top.Controls.Add(quickTools);
         root.Controls.Add(top, 0, 0);
 
         ConfigureProcessList();
@@ -224,6 +249,18 @@ internal sealed class ToolsPage : UserControl
         catch (Exception ex)
         {
             MessageBox.Show(this, ex.Message, "Could not open file location", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    private static void OpenWindowsTool(string executable, string? arguments = null)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo(executable, arguments ?? "") { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Could not open " + executable + ": " + ex.Message, "Nexus Toolbox", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 
