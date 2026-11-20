@@ -55,7 +55,10 @@ Every push to `main`, pull request to `main`, version-tag push and manual workfl
 4. Download the **Nexus-Windows-x64** artifact.
 5. Extract it and run `Nexus.exe`.
 
-The workflow publishes a **self-contained, single-file Windows x64 executable**. The .NET runtime does not need to be installed separately on the target PC.
+The workflow publishes a **self-contained, single-file Windows x64 executable**. Every successful build on `main` also commits the latest binary to `dist/Nexus.exe`, so you can grab it directly from the repository without opening Actions. The .NET runtime does not need to be installed separately on the target PC.
+
+- Direct EXE: [`dist/Nexus.exe`](dist/Nexus.exe)
+- ZIP / build artifact: available from the successful Actions run.
 
 Pushing a version tag such as `v1.0.0` also creates a GitHub Release with the ZIP attached.
 
