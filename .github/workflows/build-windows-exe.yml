@@ -9,6 +9,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: nexus-windows-build-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
