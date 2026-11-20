@@ -1,6 +1,6 @@
 # NEXUS — PC Command Center
 
-**Project Nexus + GameHub + Sentinel** in one native Windows desktop application, written in C# with Windows Forms and .NET 10 LTS.
+**Project Nexus + GameHub + Sentinel + Windows Toolbox** in one native Windows desktop application, written in C# with Windows Forms and .NET 10 LTS.
 
 Nexus is designed as a lightweight control center: monitor your PC, keep your games organised, and audit files from one dark, unified interface.
 
@@ -26,6 +26,14 @@ GameHub stores its library at:
 `%LOCALAPPDATA%\Nexus\games.json`
 
 Removing an entry only removes it from the Nexus library. It never deletes the game itself.
+
+### ⚙ Windows Toolbox — Process manager and system shortcuts
+- Live process list with PID, memory usage, window title and executable path
+- Search processes by name, PID or window title
+- End a selected process with a confirmation prompt and protected-process guard
+- Open the selected executable in File Explorer
+- Quick shortcuts to Services, Device Manager, Startup folder and Disk Cleanup
+- Auto-refreshes process information every five seconds
 
 ### ⬡ Sentinel — File integrity audit
 - Choose a folder and create a SHA-256 inventory
@@ -73,7 +81,7 @@ The published executable is in:
 
 ## Technology
 
-- C# / .NET 10 LTS
+- C# / .NET 10 LTS (Nexus Desktop 1.1.0)
 - Windows Forms
 - Windows kernel APIs for CPU and physical-memory metrics
 - .NET networking APIs for throughput sampling
