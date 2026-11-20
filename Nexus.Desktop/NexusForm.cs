@@ -14,6 +14,7 @@ internal sealed class NexusForm : Form
     private readonly Label _pageTitle = new();
     private readonly Label _pageSubtitle = new();
     private readonly Label _clock = new();
+    private readonly Label _systemStatus = new();
     private readonly List<Button> _navigation = new();
     private readonly System.Windows.Forms.Timer _clockTimer = new() { Interval = 15000 };
 
@@ -129,16 +130,28 @@ internal sealed class NexusForm : Form
         _pageSubtitle.ForeColor = Theme.Muted;
         _pageSubtitle.Font = new Font("Segoe UI", 9);
 
+        _systemStatus.Text = "●  SYSTEM READY";
+        _systemStatus.AutoSize = true;
+        _systemStatus.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        _systemStatus.ForeColor = Theme.Good;
+        _systemStatus.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+        _systemStatus.Location = new Point(680, 12);
+
         _clock.AutoSize = true;
         _clock.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         _clock.ForeColor = Theme.Muted;
         _clock.Font = new Font("Segoe UI", 9, FontStyle.Bold);
-        _clock.Location = new Point(680, 20);
+        _clock.Location = new Point(680, 45);
 
         header.Controls.Add(_pageTitle);
         header.Controls.Add(_pageSubtitle);
+        header.Controls.Add(_systemStatus);
         header.Controls.Add(_clock);
-        header.Resize += (_, _) => _clock.Left = header.ClientSize.Width - _clock.Width - 10;
+        header.Resize += (_, _) =>
+        {
+            _systemStatus.Left = Math.Max(10, header.ClientSize.Width - _systemStatus.Width - 10);
+            _clock.Left = Math.Max(10, header.ClientSize.Width - _clock.Width - 10);
+        };
         main.Controls.Add(header, 0, 0);
 
         _pageHost.Dock = DockStyle.Fill;
@@ -164,6 +177,14 @@ internal sealed class NexusForm : Form
         };
         button.FlatAppearance.BorderSize = 0;
         button.FlatAppearance.MouseOverBackColor = Theme.SurfaceRaised;
+        button.Paint += (_, e) =>
+        {
+            if (button.BackColor == Theme.SurfaceRaised)
+            {
+                using var brush = new SolidBrush(Theme.Accent);
+                e.Graphics.FillRectangle(brush, 0, 7, 3, button.Height - 14);
+            }
+        };
         button.Click += (_, _) => action();
         return button;
     }
@@ -187,6 +208,7 @@ internal sealed class NexusForm : Form
     {
         _clock.Text = DateTime.Now.ToString("ddd, dd MMM   •   HH:mm");
         _clock.Left = Math.Max(10, _clock.Parent!.ClientSize.Width - _clock.Width - 10);
+        _systemStatus.Left = Math.Max(10, _systemStatus.Parent!.ClientSize.Width - _systemStatus.Width - 10);
     }
 
     protected override void OnFormClosed(FormClosedEventArgs e)
