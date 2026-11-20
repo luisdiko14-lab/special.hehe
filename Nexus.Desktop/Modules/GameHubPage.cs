@@ -238,7 +238,7 @@ internal sealed class GameHubPage : UserControl
 
         try
         {
-            Process.Start(new ProcessStartInfo("explorer.exe", "/select,"" + game.ExecutablePath + """)
+            Process.Start(new ProcessStartInfo("explorer.exe", "/select,\"" + game.ExecutablePath + "\"")
             {
                 UseShellExecute = true
             });
