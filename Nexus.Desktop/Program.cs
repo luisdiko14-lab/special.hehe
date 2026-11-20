@@ -1,3 +1,5 @@
+using System.Windows.Forms;
+
 namespace Nexus;
 
 internal static class Program
